@@ -1,0 +1,4001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+
+  <meta name="theme-color" content="#170309" />
+
+  <title>🎁 You Have a Special Gift!</title>
+
+  <style>
+    /* =========================================================
+       ROOT
+    ========================================================== */
+
+    :root {
+      --bg-dark: #100207;
+      --bg-burgundy: #350610;
+      --bg-red: #620d1b;
+
+      --red: #d61d43;
+      --red-light: #ff3b63;
+
+      --gold: #ffd861;
+      --gold-light: #fff0a8;
+      --gold-dark: #c98b1f;
+
+      --white: #fffaf0;
+      --muted: rgba(255, 255, 255, 0.72);
+
+      --glass: rgba(255, 255, 255, 0.065);
+      --glass-hover: rgba(255, 255, 255, 0.105);
+
+      --border: rgba(255, 218, 105, 0.22);
+
+      --shadow: 0 25px 80px rgba(0, 0, 0, 0.42);
+
+      --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    /* =========================================================
+       RESET
+    ========================================================== */
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100svh;
+      margin: 0;
+
+      overflow-x: hidden;
+
+      color: white;
+
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+      background: var(--bg-dark);
+
+      position: relative;
+      isolation: isolate;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    /* =========================================================
+       BACKGROUND
+    ========================================================== */
+
+    .background {
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+      overflow: hidden;
+
+      background:
+        radial-gradient(
+          circle at 15% 10%,
+          rgba(255, 213, 87, 0.14),
+          transparent 25%
+        ),
+        radial-gradient(
+          circle at 85% 15%,
+          rgba(255, 44, 90, 0.17),
+          transparent 28%
+        ),
+        radial-gradient(
+          circle at 50% 85%,
+          rgba(255, 180, 45, 0.09),
+          transparent 32%
+        ),
+        linear-gradient(
+          145deg,
+          var(--bg-dark),
+          var(--bg-burgundy) 45%,
+          #210308
+        );
+    }
+
+    .background::before {
+      content: "";
+
+      position: absolute;
+
+      width: 170vw;
+      height: 170vw;
+
+      top: -82vw;
+      left: -35vw;
+
+      border-radius: 50%;
+
+      background:
+        repeating-conic-gradient(
+          from 0deg,
+          rgba(255,255,255,0.014) 0deg 8deg,
+          transparent 8deg 19deg
+        );
+
+      animation: backgroundRotation 42s linear infinite;
+    }
+
+    .background::after {
+      content: "";
+
+      position: absolute;
+      inset: -20%;
+
+      background:
+        radial-gradient(
+          circle at 25% 35%,
+          rgba(255, 211, 82, 0.07),
+          transparent 15%
+        ),
+        radial-gradient(
+          circle at 75% 65%,
+          rgba(255, 48, 91, 0.09),
+          transparent 18%
+        );
+
+      animation: backgroundPulse 8s ease-in-out infinite alternate;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: -9;
+      pointer-events: none;
+
+      background:
+        radial-gradient(
+          circle,
+          transparent 42%,
+          rgba(0,0,0,0.52) 100%
+        );
+    }
+
+    @keyframes backgroundRotation {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes backgroundPulse {
+      from {
+        transform: scale(1);
+        opacity: 0.55;
+      }
+
+      to {
+        transform: scale(1.12);
+        opacity: 1;
+      }
+    }
+
+    /* =========================================================
+       APP
+    ========================================================== */
+
+    .app {
+      min-height: 100vh;
+      min-height: 100svh;
+
+      width: 100%;
+
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* =========================================================
+       SCREENS
+    ========================================================== */
+
+    .screen {
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100svh;
+
+      display: none;
+
+      align-items: center;
+      justify-content: center;
+
+      position: relative;
+
+      padding:
+        max(22px, env(safe-area-inset-top))
+        15px
+        max(42px, env(safe-area-inset-bottom))
+        15px;
+
+      overflow: hidden;
+    }
+
+    .screen.active {
+      display: flex;
+      animation: screenEnter 0.75s var(--ease) both;
+    }
+
+    .screen.leaving {
+      animation: screenLeave 0.48s var(--ease) both;
+    }
+
+    @keyframes screenEnter {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes screenLeave {
+      to {
+        opacity: 0;
+        transform: translateY(-12px) scale(1.025);
+      }
+    }
+
+    .content {
+      width: min(100%, 1050px);
+      margin: auto;
+
+      position: relative;
+      z-index: 5;
+
+      text-align: center;
+    }
+
+    /* =========================================================
+       GLASS
+    ========================================================== */
+
+    .glass {
+      border: 1px solid var(--border);
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,0.105),
+          rgba(255,255,255,0.03)
+        );
+
+      backdrop-filter: blur(20px) saturate(130%);
+      -webkit-backdrop-filter: blur(20px) saturate(130%);
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.13),
+        var(--shadow);
+    }
+
+    /* =========================================================
+       TEXT
+    ========================================================== */
+
+    .eyebrow {
+      display: inline-flex;
+
+      align-items: center;
+      justify-content: center;
+
+      gap: 7px;
+
+      max-width: 100%;
+
+      padding: 8px 12px;
+
+      margin-bottom: 14px;
+
+      border-radius: 999px;
+
+      border: 1px solid rgba(255,219,108,0.2);
+
+      background: rgba(255,255,255,0.045);
+
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      color: var(--gold);
+
+      font-size: 0.66rem;
+      line-height: 1.2;
+
+      font-weight: 900;
+
+      letter-spacing: 0.13em;
+
+      text-transform: uppercase;
+    }
+
+    .title {
+      margin: 0 auto;
+
+      max-width: 950px;
+
+      font-size:
+        clamp(
+          2.15rem,
+          10.3vw,
+          6.5rem
+        );
+
+      line-height: 0.92;
+
+      letter-spacing: -0.06em;
+
+      font-weight: 1000;
+
+      text-wrap: balance;
+
+      background:
+        linear-gradient(
+          100deg,
+          #fff6cb,
+          #ffd45b,
+          white,
+          #ffb22e,
+          #fff0bd
+        );
+
+      background-size: 250% auto;
+
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      color: transparent;
+
+      animation: textShimmer 5s linear infinite;
+
+      filter:
+        drop-shadow(
+          0 10px 30px rgba(255,194,54,0.12)
+        );
+    }
+
+    .subtitle {
+      width: min(100%, 650px);
+
+      margin: 17px auto 0;
+
+      color: var(--muted);
+
+      font-size:
+        clamp(
+          0.92rem,
+          3.9vw,
+          1.28rem
+        );
+
+      line-height: 1.5;
+    }
+
+    @keyframes textShimmer {
+      to {
+        background-position: 250% center;
+      }
+    }
+
+    /* =========================================================
+       PARTICLES
+    ========================================================== */
+
+    .particle-field,
+    .confetti-field {
+      position: absolute;
+      inset: 0;
+
+      overflow: hidden;
+
+      pointer-events: none;
+
+      z-index: 1;
+    }
+
+    .particle {
+      position: absolute;
+
+      left: var(--x);
+      top: var(--y);
+
+      width: var(--size);
+      height: var(--size);
+
+      border-radius: 50%;
+
+      background: #ffd76a;
+
+      opacity: var(--opacity);
+
+      box-shadow:
+        0 0 16px rgba(255,215,106,0.7);
+
+      animation:
+        particleFloat
+        var(--duration)
+        ease-in-out
+        var(--delay)
+        infinite alternate;
+    }
+
+    .particle.red {
+      background: #ff426b;
+
+      box-shadow:
+        0 0 15px rgba(255,66,107,0.65);
+    }
+
+    @keyframes particleFloat {
+      from {
+        transform:
+          translate3d(-9px, 13px, 0)
+          scale(0.7);
+      }
+
+      to {
+        transform:
+          translate3d(15px, -30px, 0)
+          scale(1.2);
+      }
+    }
+
+    /* =========================================================
+       HERO GIFT
+    ========================================================== */
+
+    .hero-gift {
+      width: min(54vw, 225px);
+      aspect-ratio: 1;
+
+      margin: 0 auto 25px;
+
+      display: grid;
+      place-items: center;
+
+      position: relative;
+
+      animation: heroGiftFloat 3s ease-in-out infinite;
+
+      filter:
+        drop-shadow(
+          0 25px 35px rgba(0,0,0,0.38)
+        );
+    }
+
+    .hero-gift::before {
+      content: "";
+
+      position: absolute;
+
+      width: 86%;
+      height: 86%;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(255,215,92,0.22),
+          transparent 67%
+        );
+
+      filter: blur(10px);
+
+      animation:
+        giftAura 2.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroGiftFloat {
+      0%, 100% {
+        transform:
+          translateY(0)
+          rotate(-1deg);
+      }
+
+      50% {
+        transform:
+          translateY(-12px)
+          rotate(1.4deg);
+      }
+    }
+
+    @keyframes giftAura {
+      from {
+        transform: scale(0.88);
+        opacity: 0.58;
+      }
+
+      to {
+        transform: scale(1.12);
+        opacity: 1;
+      }
+    }
+
+    .gift-box {
+      width: 47%;
+      aspect-ratio: 1.08;
+
+      position: relative;
+
+      border-radius:
+        10px
+        10px
+        15px
+        15px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #e5244a,
+          #850b24 70%
+        );
+
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.11),
+        inset -15px -20px 35px rgba(0,0,0,0.2),
+        0 20px 45px rgba(110,0,25,0.5);
+
+      z-index: 2;
+    }
+
+    .gift-box::before {
+      content: "";
+
+      position: absolute;
+
+      left: 42%;
+      top: 0;
+
+      width: 16%;
+      height: 103%;
+
+      background:
+        linear-gradient(
+          90deg,
+          #ffd86b,
+          #fff1a2 45%,
+          #dda126
+        );
+
+      box-shadow:
+        0 0 15px rgba(255,216,91,0.43);
+    }
+
+    .gift-box::after {
+      content: "";
+
+      position: absolute;
+
+      left: 0;
+      top: 39%;
+
+      width: 100%;
+      height: 18%;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent 40%,
+          #ffdc70 41% 58%,
+          transparent 59%
+        );
+    }
+
+    .gift-lid {
+      position: absolute;
+
+      z-index: 4;
+
+      width: 115%;
+      height: 28%;
+
+      left: -7.5%;
+      top: -21%;
+
+      border-radius: 9px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #ff315b,
+          #a10c2d
+        );
+
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.16),
+        0 10px 18px rgba(0,0,0,0.25);
+    }
+
+    .gift-lid::after {
+      content: "";
+
+      position: absolute;
+
+      left: 43%;
+      top: 0;
+
+      width: 14%;
+      height: 100%;
+
+      background:
+        linear-gradient(
+          90deg,
+          #ffd968,
+          #fff0a1,
+          #df9f22
+        );
+    }
+
+    .bow {
+      position: absolute;
+
+      left: 50%;
+      top: -52%;
+
+      width: 61%;
+      height: 56%;
+
+      transform: translateX(-50%);
+
+      z-index: 5;
+    }
+
+    .bow::before,
+    .bow::after {
+      content: "";
+
+      position: absolute;
+
+      top: 15%;
+
+      width: 48%;
+      height: 74%;
+
+      border-radius:
+        70%
+        35%
+        65%
+        35%;
+
+      background:
+        linear-gradient(
+          145deg,
+          #ffdf78,
+          #e5a52b
+        );
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.4),
+        0 5px 16px rgba(0,0,0,0.22);
+    }
+
+    .bow::before {
+      left: 0;
+      transform: rotate(-27deg);
+    }
+
+    .bow::after {
+      right: 0;
+      transform:
+        scaleX(-1)
+        rotate(-27deg);
+    }
+
+    .bow-center {
+      position: absolute;
+
+      left: 50%;
+      top: 34%;
+
+      width: 28%;
+      aspect-ratio: 1;
+
+      transform: translateX(-50%);
+
+      border-radius: 40%;
+
+      background:
+        linear-gradient(
+          145deg,
+          #fff3aa,
+          #da981e
+        );
+
+      box-shadow:
+        0 0 22px rgba(255,212,91,0.55);
+    }
+
+    /* =========================================================
+       BUTTONS
+    ========================================================== */
+
+    .actions {
+      width: min(100%, 760px);
+
+      margin: 31px auto 0;
+
+      display: grid;
+
+      gap: 13px;
+
+      position: relative;
+
+      min-height: 140px;
+    }
+
+    .action-button {
+      width: 100%;
+
+      min-height: 64px;
+
+      padding: 15px 18px;
+
+      border-radius: 19px;
+
+      border:
+        1px solid rgba(255,222,120,0.28);
+
+      color: white;
+
+      cursor: pointer;
+
+      position: relative;
+
+      overflow: hidden;
+
+      touch-action: manipulation;
+
+      transition:
+        transform 0.35s var(--ease),
+        box-shadow 0.35s var(--ease),
+        background 0.35s ease,
+        border-color 0.35s ease;
+
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .action-button::before {
+      content: "";
+
+      position: absolute;
+      inset: -2px;
+
+      background:
+        linear-gradient(
+          110deg,
+          transparent 15%,
+          rgba(255,255,255,0.33) 38%,
+          transparent 61%
+        );
+
+      transform: translateX(-120%);
+
+      transition:
+        transform 0.7s ease;
+    }
+
+    .action-button:hover::before,
+    .action-button:focus-visible::before {
+      transform: translateX(120%);
+    }
+
+    .action-button.primary {
+      background:
+        linear-gradient(
+          135deg,
+          #ef2552,
+          #9e0c2d
+        );
+
+      box-shadow:
+        0 15px 38px rgba(187,15,53,0.34),
+        inset 0 1px 0 rgba(255,255,255,0.18);
+    }
+
+    .action-button.primary:hover,
+    .action-button.primary:focus-visible {
+      transform:
+        translateY(-4px)
+        scale(1.012);
+
+      border-color:
+        rgba(255,227,140,0.6);
+
+      box-shadow:
+        0 22px 48px rgba(209,20,61,0.44),
+        0 0 30px rgba(255,64,100,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .action-button.secondary {
+      background:
+        rgba(255,255,255,0.045);
+
+      color:
+        rgba(255,255,255,0.82);
+    }
+
+    .button-text {
+      position: relative;
+      z-index: 3;
+
+      font-size:
+        clamp(
+          0.88rem,
+          3.8vw,
+          1rem
+        );
+
+      font-weight: 950;
+
+      letter-spacing: 0.025em;
+    }
+
+    .action-icon {
+      margin-right: 7px;
+      font-size: 1.28em;
+      vertical-align: -2px;
+    }
+
+    .small-note {
+      margin-top: 13px;
+
+      color:
+        rgba(255,255,255,0.47);
+
+      font-size:
+        clamp(
+          0.68rem,
+          2.7vw,
+          0.75rem
+        );
+
+      line-height: 1.4;
+    }
+
+    /* =========================================================
+       LOADING
+    ========================================================== */
+
+    .loading-wrap {
+      width: min(100%, 660px);
+
+      padding:
+        28px 17px
+        31px;
+
+      border-radius: 30px;
+    }
+
+    .loading-gift {
+      width: min(49vw, 210px);
+      aspect-ratio: 1;
+
+      margin: 0 auto 29px;
+
+      position: relative;
+
+      display: grid;
+      place-items: center;
+    }
+
+    .loading-gift .gift-box {
+      animation:
+        giftShake 0.9s ease-in-out infinite;
+    }
+
+    @keyframes giftShake {
+      0%,100% {
+        transform: rotate(0);
+      }
+
+      20% {
+        transform:
+          rotate(-4deg)
+          translateX(-3px);
+      }
+
+      40% {
+        transform:
+          rotate(4deg)
+          translateX(3px);
+      }
+
+      60% {
+        transform: rotate(-3deg);
+      }
+
+      80% {
+        transform: rotate(3deg);
+      }
+    }
+
+    .loading-ring {
+      position: absolute;
+      inset: 2.5%;
+
+      border-radius: 50%;
+
+      border:
+        2px solid rgba(255,220,105,0.1);
+
+      border-top-color:
+        #ffd35c;
+
+      border-right-color:
+        #ff3d62;
+
+      animation:
+        rotateLoader
+        1.1s
+        linear
+        infinite;
+
+      box-shadow:
+        0 0 26px rgba(255,210,79,0.14),
+        inset 0 0 25px rgba(255,210,79,0.06);
+    }
+
+    .loading-ring::before {
+      content: "";
+
+      position: absolute;
+      inset: 9px;
+
+      border-radius: 50%;
+
+      border:
+        1px dashed
+        rgba(255,255,255,0.18);
+
+      animation:
+        rotateLoaderReverse
+        3s
+        linear
+        infinite;
+    }
+
+    @keyframes rotateLoader {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes rotateLoaderReverse {
+      to {
+        transform: rotate(-360deg);
+      }
+    }
+
+    .loading-title {
+      margin: 0;
+
+      font-size:
+        clamp(
+          1.6rem,
+          7vw,
+          3.2rem
+        );
+
+      line-height: 1;
+
+      font-weight: 1000;
+
+      letter-spacing: -0.045em;
+    }
+
+    .loading-subtitle {
+      margin: 12px auto 0;
+
+      color: var(--muted);
+
+      font-size: 0.95rem;
+    }
+
+    .loading-bar {
+      width: min(100%, 430px);
+
+      height: 7px;
+
+      margin: 25px auto 0;
+
+      border-radius: 999px;
+
+      overflow: hidden;
+
+      background:
+        rgba(255,255,255,0.08);
+    }
+
+    .loading-progress {
+      width: 0%;
+      height: 100%;
+
+      border-radius: inherit;
+
+      background:
+        linear-gradient(
+          90deg,
+          #ff3158,
+          #ffd765
+        );
+
+      box-shadow:
+        0 0 18px rgba(255,207,87,0.55);
+
+      animation:
+        progressBar
+        2.6s
+        var(--ease)
+        forwards;
+    }
+
+    @keyframes progressBar {
+      0% {
+        width: 3%;
+      }
+
+      45% {
+        width: 48%;
+      }
+
+      75% {
+        width: 78%;
+      }
+
+      100% {
+        width: 100%;
+      }
+    }
+
+    /* =========================================================
+       LUCKY DRAW
+    ========================================================== */
+
+    .draw-title {
+      margin: 0;
+
+      font-size:
+        clamp(
+          2rem,
+          8.7vw,
+          4.5rem
+        );
+
+      line-height: 0.97;
+
+      letter-spacing: -0.055em;
+
+      font-weight: 1000;
+
+      background:
+        linear-gradient(
+          90deg,
+          #fff,
+          #ffd562,
+          #fff1be
+        );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      color: transparent;
+    }
+
+    .draw-grid {
+      width: min(100%, 920px);
+
+      margin: 25px auto 0;
+
+      display: grid;
+
+      gap: 12px;
+    }
+
+    .prize-card {
+      width: 100%;
+
+      min-height: 140px;
+
+      padding: 19px 17px;
+
+      border-radius: 22px;
+
+      text-align: left;
+
+      cursor: pointer;
+
+      position: relative;
+
+      overflow: hidden;
+
+      color: white;
+
+      touch-action: manipulation;
+
+      transition:
+        transform 0.4s var(--ease),
+        border-color 0.35s ease,
+        box-shadow 0.35s ease,
+        background 0.35s ease;
+    }
+
+    .prize-card::before {
+      content: "";
+
+      position: absolute;
+
+      width: 200%;
+      height: 240%;
+
+      left: -50%;
+      top: -70%;
+
+      background:
+        conic-gradient(
+          from 0deg,
+          transparent 0 35%,
+          rgba(255,214,91,0.25) 42%,
+          transparent 51% 100%
+        );
+
+      opacity: 0.4;
+
+      animation:
+        cardSweep
+        4.5s
+        linear
+        infinite;
+    }
+
+    .prize-card > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .prize-card:hover,
+    .prize-card.selected {
+      transform: translateY(-4px);
+
+      border-color:
+        rgba(255,223,112,0.68);
+
+      background:
+        rgba(255,255,255,0.105);
+
+      box-shadow:
+        0 18px 45px rgba(0,0,0,0.29),
+        0 0 32px rgba(255,198,61,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.15);
+    }
+
+    .prize-card.selected::after {
+      content: "✓ SELECTED";
+
+      position: absolute;
+
+      z-index: 5;
+
+      top: 11px;
+      right: 10px;
+
+      padding: 5px 7px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(255,211,94,0.14);
+
+      border:
+        1px solid
+        rgba(255,219,106,0.35);
+
+      color:
+        #ffe08b;
+
+      font-size: 0.55rem;
+      font-weight: 1000;
+
+      letter-spacing: 0.06em;
+    }
+
+    .prize-icon {
+      margin-bottom: 10px;
+
+      font-size:
+        clamp(
+          2rem,
+          10vw,
+          3.3rem
+        );
+
+      line-height: 1;
+    }
+
+    .prize-name {
+      font-size:
+        clamp(
+          1rem,
+          4vw,
+          1.4rem
+        );
+
+      font-weight: 1000;
+
+      line-height: 1.1;
+    }
+
+    .prize-desc {
+      margin-top: 5px;
+
+      color:
+        rgba(255,255,255,0.55);
+
+      font-size: 0.78rem;
+    }
+
+    @keyframes cardSweep {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spin-button {
+      width: min(100%, 550px);
+
+      margin: 22px auto 0;
+
+      min-height: 68px;
+    }
+
+    .spin-button:disabled {
+      opacity: 0.52;
+
+      cursor: not-allowed;
+
+      filter: saturate(0.65);
+    }
+
+    /* =========================================================
+       SPINNING SCREEN
+    ========================================================== */
+
+    .spin-container {
+      width: min(100%, 710px);
+    }
+
+    .countdown {
+      min-height: 1em;
+
+      margin-bottom: 12px;
+
+      font-size:
+        clamp(
+          3rem,
+          18vw,
+          7.4rem
+        );
+
+      line-height: 1;
+
+      font-weight: 1000;
+
+      color: #ffdd73;
+
+      text-shadow:
+        0 0 20px rgba(255,214,91,0.55),
+        0 0 50px rgba(255,73,96,0.18);
+    }
+
+    .countdown.pop {
+      animation:
+        countdownPop
+        0.45s
+        cubic-bezier(.1,1.5,.3,1)
+        both;
+    }
+
+    @keyframes countdownPop {
+      from {
+        opacity: 0;
+        transform: scale(0.2);
+        filter: blur(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+      }
+    }
+
+    .wheel-shell {
+      width: min(78vw, 370px);
+
+      aspect-ratio: 1;
+
+      margin: 0 auto;
+
+      position: relative;
+
+      display: grid;
+
+      place-items: center;
+    }
+
+    .wheel-glow {
+      position: absolute;
+      inset: -11%;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(255,208,79,0.18),
+          transparent 62%
+        );
+
+      filter: blur(10px);
+
+      animation:
+        wheelGlow
+        1s
+        ease-in-out
+        infinite alternate;
+    }
+
+    @keyframes wheelGlow {
+      to {
+        transform: scale(1.12);
+        opacity: 0.75;
+      }
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+
+      border-radius: 50%;
+
+      overflow: hidden;
+
+      position: relative;
+
+      border:
+        6px solid
+        rgba(255,223,115,0.67);
+
+      background:
+        conic-gradient(
+          #e9234d 0 14.285%,
+          #ffcf57 14.285% 28.57%,
+          #a81031 28.57% 42.855%,
+          #fce38b 42.855% 57.14%,
+          #d21840 57.14% 71.425%,
+          #ffd667 71.425% 85.71%,
+          #96102c 85.71% 100%
+        );
+
+      box-shadow:
+        0 0 0 5px rgba(0,0,0,0.14),
+        0 20px 60px rgba(0,0,0,0.44),
+        0 0 45px rgba(255,210,76,0.23);
+
+      transform: rotate(0deg);
+
+      transition:
+        transform
+        5.4s
+        cubic-bezier(.1,.73,.08,1);
+    }
+
+    .wheel::before {
+      content: "";
+
+      position: absolute;
+
+      inset: 13%;
+
+      border-radius: 50%;
+
+      border:
+        2px dashed
+        rgba(255,255,255,0.3);
+    }
+
+    .wheel-label {
+      position: absolute;
+
+      left: 50%;
+      top: 50%;
+
+      width: 30%;
+
+      transform:
+        translate(-50%, -50%)
+        rotate(var(--r));
+
+      transform-origin: 50% 50%;
+
+      text-align: center;
+
+      font-size:
+        clamp(
+          0.56rem,
+          2.5vw,
+          0.9rem
+        );
+
+      line-height: 1.1;
+
+      font-weight: 1000;
+
+      color:
+        rgba(74,15,21,0.9);
+    }
+
+    .wheel-label span {
+      display: block;
+
+      transform:
+        rotate(calc(var(--r) * -1));
+    }
+
+    .wheel-center {
+      position: absolute;
+
+      z-index: 4;
+
+      width: 20%;
+
+      aspect-ratio: 1;
+
+      display: grid;
+
+      place-items: center;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle at 32% 26%,
+          #fff3b1,
+          #d89925
+        );
+
+      border:
+        4px solid
+        #fff0ad;
+
+      box-shadow:
+        0 0 35px rgba(255,215,89,0.45),
+        inset 0 3px 8px rgba(255,255,255,0.44);
+    }
+
+    .pointer {
+      position: absolute;
+
+      z-index: 8;
+
+      top: -8px;
+      left: 50%;
+
+      transform:
+        translateX(-50%);
+
+      width: 0;
+      height: 0;
+
+      border-left:
+        17px solid transparent;
+
+      border-right:
+        17px solid transparent;
+
+      border-top:
+        42px solid #fff0a1;
+
+      filter:
+        drop-shadow(
+          0 5px 7px rgba(0,0,0,0.35)
+        );
+    }
+
+    .spin-status {
+      margin-top: 23px;
+
+      color: var(--muted);
+
+      font-size: 0.95rem;
+    }
+
+    .rapid-prize {
+      min-height: 1.5em;
+
+      margin-top: 7px;
+
+      color: #ffe298;
+
+      font-size: 1.05rem;
+
+      font-weight: 950;
+
+      animation:
+        rapidText
+        0.18s
+        ease-in-out;
+    }
+
+    @keyframes rapidText {
+      from {
+        opacity: 0.1;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .screen-shake {
+      animation:
+        screenShake
+        0.15s
+        linear
+        infinite;
+    }
+
+    @keyframes screenShake {
+      0% {
+        transform: translate3d(0,0,0);
+      }
+
+      25% {
+        transform: translate3d(-2px,1px,0);
+      }
+
+      50% {
+        transform: translate3d(2px,-1px,0);
+      }
+
+      75% {
+        transform: translate3d(-1px,-2px,0);
+      }
+
+      100% {
+        transform: translate3d(1px,2px,0);
+      }
+    }
+
+    /* =========================================================
+       FINAL RESULT
+    ========================================================== */
+
+    .result-card {
+      width: min(100%, 850px);
+
+      padding:
+        28px 15px
+        30px;
+
+      border-radius: 34px;
+
+      position: relative;
+
+      overflow: hidden;
+    }
+
+    .result-card::before {
+      content: "";
+
+      position: absolute;
+
+      width: 480px;
+      height: 480px;
+
+      left: 50%;
+      top: -255px;
+
+      transform:
+        translateX(-50%);
+
+      border-radius: 50%;
+
+      background:
+        rgba(255,207,68,0.15);
+
+      filter: blur(50px);
+    }
+
+    .crown {
+      position: relative;
+
+      z-index: 2;
+
+      font-size:
+        clamp(
+          3.2rem,
+          16vw,
+          7rem
+        );
+
+      line-height: 1;
+
+      margin-bottom: 2px;
+
+      animation:
+        crownFloat
+        2s
+        ease-in-out
+        infinite,
+        crownGlow
+        1.5s
+        ease-in-out
+        infinite alternate;
+    }
+
+    @keyframes crownFloat {
+      0%,100% {
+        transform:
+          translateY(0)
+          rotate(-3deg);
+      }
+
+      50% {
+        transform:
+          translateY(-12px)
+          rotate(3deg);
+      }
+    }
+
+    @keyframes crownGlow {
+      from {
+        filter:
+          drop-shadow(
+            0 0 7px rgba(255,217,87,0.2)
+          );
+      }
+
+      to {
+        filter:
+          drop-shadow(
+            0 0 28px rgba(255,217,87,0.64)
+          );
+      }
+    }
+
+    .heart {
+      position: relative;
+
+      z-index: 2;
+
+      font-size:
+        clamp(
+          2.8rem,
+          12vw,
+          5.6rem
+        );
+
+      line-height: .9;
+
+      animation:
+        heartBeat
+        1.25s
+        ease-in-out
+        infinite;
+    }
+
+    @keyframes heartBeat {
+      0%,100% {
+        transform: scale(1);
+      }
+
+      18% {
+        transform: scale(1.13);
+      }
+
+      32% {
+        transform: scale(1);
+      }
+
+      48% {
+        transform: scale(1.08);
+      }
+    }
+
+    .result-title {
+      position: relative;
+
+      z-index: 2;
+
+      margin-top: 11px;
+
+      font-size:
+        clamp(
+          2rem,
+          9.5vw,
+          4.7rem
+        );
+
+      line-height: 0.95;
+
+      font-weight: 1000;
+
+      letter-spacing: -0.055em;
+
+      background:
+        linear-gradient(
+          100deg,
+          #fff9d2,
+          #ffd15b,
+          #fff,
+          #ffb83d
+        );
+
+      background-size: 250% auto;
+
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      color: transparent;
+
+      animation:
+        resultShimmer
+        2.7s
+        linear
+        infinite,
+        resultReveal
+        0.9s
+        var(--ease)
+        both;
+    }
+
+    @keyframes resultShimmer {
+      to {
+        background-position: 250% center;
+      }
+    }
+
+    @keyframes resultReveal {
+      from {
+        opacity: 0;
+        transform:
+          translateY(30px)
+          scale(0.83);
+        filter: blur(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+        filter: blur(0);
+      }
+    }
+
+    .won-text {
+      position: relative;
+
+      z-index: 2;
+
+      margin-top: 19px;
+
+      color: #fff2c0;
+
+      font-size:
+        clamp(
+          1.2rem,
+          5.6vw,
+          2rem
+        );
+
+      font-weight: 1000;
+
+      letter-spacing: .04em;
+    }
+
+    .winner-name {
+      position: relative;
+
+      z-index: 2;
+
+      margin-top: 8px;
+
+      font-size:
+        clamp(
+          2.15rem,
+          12vw,
+          6.2rem
+        );
+
+      line-height: .94;
+
+      font-weight: 1000;
+
+      letter-spacing: -0.065em;
+
+      overflow-wrap: anywhere;
+
+      background:
+        linear-gradient(
+          90deg,
+          #fff7ce,
+          #ffd65e,
+          white,
+          #ffb535,
+          #fff0bd
+        );
+
+      background-size: 250% auto;
+
+      -webkit-background-clip: text;
+      background-clip: text;
+
+      color: transparent;
+
+      animation:
+        nameShimmer
+        3s
+        linear
+        infinite,
+        nameReveal
+        1s
+        .12s
+        var(--ease)
+        both;
+    }
+
+    @keyframes nameShimmer {
+      to {
+        background-position: 250% center;
+      }
+    }
+
+    @keyframes nameReveal {
+      from {
+        opacity: 0;
+        transform:
+          scale(0.7)
+          translateY(23px);
+        filter: blur(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+        filter: blur(0);
+      }
+    }
+
+    .best-son {
+      position: relative;
+
+      z-index: 2;
+
+      margin:
+        14px auto
+        0;
+
+      width: min(100%, 700px);
+
+      font-size:
+        clamp(
+          1.08rem,
+          5.5vw,
+          2.3rem
+        );
+
+      line-height: 1.14;
+
+      font-weight: 1000;
+
+      color: #ffe39a;
+
+      text-shadow:
+        0 5px 24px rgba(255,207,79,0.2);
+
+      animation:
+        bestSonReveal
+        1s
+        .3s
+        var(--ease)
+        both;
+    }
+
+    @keyframes bestSonReveal {
+      from {
+        opacity: 0;
+        transform:
+          translateY(18px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .celebration-emojis {
+      position: relative;
+
+      z-index: 2;
+
+      width: min(100%, 610px);
+
+      margin:
+        21px auto
+        0;
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      flex-wrap: wrap;
+
+      gap: 9px;
+    }
+
+    .celebration-emojis span {
+      display: inline-block;
+
+      font-size:
+        clamp(
+          1.6rem,
+          7vw,
+          3.2rem
+        );
+
+      animation:
+        emojiFloat
+        var(--duration)
+        ease-in-out
+        infinite alternate;
+    }
+
+    @keyframes emojiFloat {
+      from {
+        transform:
+          translateY(4px)
+          rotate(-5deg);
+      }
+
+      to {
+        transform:
+          translateY(-9px)
+          rotate(5deg)
+          scale(1.08);
+      }
+    }
+
+    .final-message {
+      position: relative;
+
+      z-index: 2;
+
+      width: min(100%, 600px);
+
+      margin: 17px auto 0;
+
+      padding: 13px 15px;
+
+      border-radius: 17px;
+
+      border:
+        1px solid
+        rgba(255,219,109,0.17);
+
+      background:
+        rgba(255,255,255,0.038);
+
+      color:
+        rgba(255,255,255,0.64);
+
+      font-size:
+        clamp(
+          .78rem,
+          3.2vw,
+          .9rem
+        );
+
+      line-height: 1.5;
+    }
+
+    .result-actions {
+      position: relative;
+
+      z-index: 3;
+
+      width: min(100%, 470px);
+
+      margin:
+        19px auto
+        0;
+    }
+
+    /* =========================================================
+       CONFETTI
+    ========================================================== */
+
+    .confetti-piece {
+      position: absolute;
+
+      left: var(--left);
+      top: -30px;
+
+      width: var(--width);
+      height: var(--height);
+
+      border-radius: 2px;
+
+      background: var(--color);
+
+      opacity: .95;
+
+      animation:
+        confettiFall
+        var(--duration)
+        cubic-bezier(.2,.7,.25,1)
+        var(--delay)
+        forwards;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        opacity: 0;
+
+        transform:
+          translate3d(0,-50px,0)
+          rotate(0deg)
+          scale(.6);
+      }
+
+      12% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+
+        transform:
+          translate3d(
+            var(--drift),
+            110vh,
+            0
+          )
+          rotate(var(--spin))
+          scale(1);
+      }
+    }
+
+    /* =========================================================
+       FOOTER
+    ========================================================== */
+
+    .footer-note {
+      position: fixed;
+
+      z-index: 50;
+
+      left: 50%;
+      bottom:
+        max(
+          8px,
+          env(safe-area-inset-bottom)
+        );
+
+      transform:
+        translateX(-50%);
+
+      width:
+        calc(100% - 24px);
+
+      text-align: center;
+
+      color:
+        rgba(255,255,255,0.35);
+
+      font-size:
+        clamp(
+          .56rem,
+          2.4vw,
+          .67rem
+        );
+
+      line-height: 1.3;
+
+      pointer-events: none;
+    }
+
+    /* =========================================================
+       TABLET / DESKTOP
+    ========================================================== */
+
+    @media (min-width: 700px) {
+
+      .screen {
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+
+      .actions {
+        grid-template-columns: 1fr 1fr;
+
+        min-height: 75px;
+      }
+
+      .draw-grid {
+        grid-template-columns:
+          repeat(3, 1fr);
+      }
+
+      .prize-card {
+        min-height: 215px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: center;
+      }
+
+      .result-card {
+        padding:
+          40px
+          35px
+          32px;
+      }
+
+      .final-message {
+        padding:
+          15px 20px;
+      }
+    }
+
+    /* =========================================================
+       VERY SMALL PHONES
+    ========================================================== */
+
+    @media (max-width: 370px) {
+
+      .screen {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .hero-gift {
+        width: 48vw;
+      }
+
+      .action-button {
+        min-height: 61px;
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .loading-wrap {
+        padding:
+          25px 13px
+          28px;
+      }
+
+      .result-card {
+        padding:
+          25px 12px
+          28px;
+      }
+
+      .celebration-emojis {
+        gap: 6px;
+      }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================== */
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =======================================================
+       GLOBAL BACKGROUND
+  ======================================================== -->
+
+  <div class="background"></div>
+  <div class="vignette"></div>
+
+  <main class="app">
+
+    <!-- =====================================================
+         SCREEN 1
+    ====================================================== -->
+
+    <section
+      id="screen1"
+      class="screen active"
+    >
+
+      <div
+        id="particles1"
+        class="particle-field"
+        aria-hidden="true"
+      ></div>
+
+      <div class="content">
+
+        <div
+          class="hero-gift"
+          aria-hidden="true"
+        >
+
+          <div class="gift-box">
+
+            <div class="gift-lid"></div>
+
+            <div class="bow">
+              <div class="bow-center"></div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="eyebrow">
+          ✨ A SPECIAL SURPRISE FOR YOU
+        </div>
+
+        <h1 class="title">
+          🎁 YOU HAVE A<br />
+          SPECIAL GIFT!
+        </h1>
+
+        <p class="subtitle">
+          Choose an option below to continue
+        </p>
+
+        <div class="actions">
+
+          <button
+            id="wantGiftBtn"
+            class="action-button primary"
+            type="button"
+          >
+            <span class="button-text">
+              <span class="action-icon">🎁</span>
+              I WANT THE GIFT
+            </span>
+          </button>
+
+          <button
+            id="noGiftBtn"
+            class="action-button secondary"
+            type="button"
+            aria-label="I don't want the gift"
+          >
+            <span class="button-text">
+              <span class="action-icon">❌</span>
+              I DON'T WANT THE GIFT
+            </span>
+          </button>
+
+        </div>
+
+        <div class="small-note">
+          Tap the gift option to reveal your surprise ✨
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCREEN 2
+    ====================================================== -->
+
+    <section
+      id="screen2"
+      class="screen"
+    >
+
+      <div
+        id="particles2"
+        class="particle-field"
+        aria-hidden="true"
+      ></div>
+
+      <div class="content">
+
+        <div class="glass loading-wrap">
+
+          <div
+            class="loading-gift"
+            aria-hidden="true"
+          >
+
+            <div class="loading-ring"></div>
+
+            <div class="gift-box">
+
+              <div class="gift-lid"></div>
+
+              <div class="bow">
+                <div class="bow-center"></div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <h2 class="loading-title">
+            Preparing your surprise...
+          </h2>
+
+          <p
+            id="loadingText"
+            class="loading-subtitle"
+          >
+            Your gift is almost ready!
+          </p>
+
+          <div
+            class="loading-bar"
+            aria-hidden="true"
+          >
+            <div class="loading-progress"></div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCREEN 3
+    ====================================================== -->
+
+    <section
+      id="screen3"
+      class="screen"
+    >
+
+      <div
+        id="particles3"
+        class="particle-field"
+        aria-hidden="true"
+      ></div>
+
+      <div class="content">
+
+        <div class="draw-header">
+
+          <div class="eyebrow">
+            🎟️ YOUR LUCKY DRAW
+          </div>
+
+          <h2 class="draw-title">
+            🎰 CHOOSE YOUR<br />
+            LUCKY DRAW
+          </h2>
+
+          <p class="subtitle">
+            Select one option to enter the animated demo draw
+          </p>
+
+        </div>
+
+        <div class="draw-grid">
+
+          <button
+            class="prize-card glass"
+            data-prize="cash"
+            type="button"
+            aria-pressed="false"
+          >
+
+            <div class="prize-icon">
+              💰
+            </div>
+
+            <div class="prize-name">
+              ₹5,00,000 CASH
+            </div>
+
+            <div class="prize-desc">
+              Mega cash reward
+            </div>
+
+          </button>
+
+
+          <button
+            class="prize-card glass"
+            data-prize="iphone"
+            type="button"
+            aria-pressed="false"
+          >
+
+            <div class="prize-icon">
+              📱
+            </div>
+
+            <div class="prize-name">
+              1 iPHONE
+            </div>
+
+            <div class="prize-desc">
+              Premium smartphone
+            </div>
+
+          </button>
+
+
+          <button
+            class="prize-card glass"
+            data-prize="chocolate"
+            type="button"
+            aria-pressed="false"
+          >
+
+            <div class="prize-icon">
+              🍫
+            </div>
+
+            <div class="prize-name">
+              1 CHOCOLATE
+            </div>
+
+            <div class="prize-desc">
+              Sweet chocolate treat
+            </div>
+
+          </button>
+
+        </div>
+
+        <button
+          id="spinBtn"
+          class="action-button primary spin-button"
+          type="button"
+          disabled
+        >
+          <span class="button-text">
+            🎡 SPIN THE LUCKY DRAW
+          </span>
+        </button>
+
+        <div class="small-note">
+          Select a card first to activate the spin
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCREEN 4
+    ====================================================== -->
+
+    <section
+      id="screen4"
+      class="screen"
+    >
+
+      <div
+        id="particles4"
+        class="particle-field"
+        aria-hidden="true"
+      ></div>
+
+      <div class="content spin-container">
+
+        <div
+          id="countdown"
+          class="countdown"
+          aria-live="polite"
+        >
+          3
+        </div>
+
+        <div class="wheel-shell">
+
+          <div class="wheel-glow"></div>
+
+          <div class="pointer"></div>
+
+          <div
+            id="wheel"
+            class="wheel"
+            aria-hidden="true"
+          >
+
+            <div
+              class="wheel-label"
+              style="--r:0deg;"
+            >
+              <span>₹5L CASH</span>
+            </div>
+
+            <div
+              class="wheel-label"
+              style="--r:51.43deg;"
+            >
+              <span>IPHONE</span>
+            </div>
+
+            <div
+              class="wheel-label"
+              style="--r:102.86deg;"
+            >
+              <span>CHOCOLATE</span>
+            </div>
+
+            <div
+              class="wheel-label"
+              style="--r:154.29deg;"
+            >
+              <span>₹5L CASH</span>
+            </div>
+
+            <div
+              class="wheel-label"
+              style="--r:205.72deg;"
+            >
+              <span>IPHONE</span>
+            </div>
+
+            <div
+              class="wheel-label"
+              style="--r:257.15deg;"
+            >
+              <span>CHOCOLATE</span>
+            </div>
+
+            <div
+              class="wheel-label"
+              style="--r:308.58deg;"
+            >
+              <span>SURPRISE</span>
+            </div>
+
+            <div class="wheel-center">
+              🎁
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="spin-status">
+
+          Drawing your lucky result...
+
+          <div
+            id="rapidPrize"
+            class="rapid-prize"
+          >
+            🔥 GET READY!
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCREEN 5 — FINAL
+    ====================================================== -->
+
+    <section
+      id="screen5"
+      class="screen"
+    >
+
+      <div
+        id="confetti"
+        class="confetti-field"
+        aria-hidden="true"
+      ></div>
+
+      <div class="content">
+
+        <div class="result-card glass">
+
+          <div class="eyebrow">
+            🏆 SPECIAL RESULT
+          </div>
+
+          <div
+            class="crown"
+            aria-hidden="true"
+          >
+            👑
+          </div>
+
+          <div
+            class="heart"
+            aria-hidden="true"
+          >
+            💖
+          </div>
+
+          <h2 class="result-title">
+            🎉 CONGRATULATIONS! 🎉
+          </h2>
+
+          <div class="won-text">
+            YOU WON!
+          </div>
+
+          <div class="winner-name">
+            RAGHAV RASTOGI
+          </div>
+
+          <div class="best-son">
+            THE BEST SON IN THE WORLD! 👑
+          </div>
+
+          <div
+            class="celebration-emojis"
+            aria-hidden="true"
+          >
+
+            <span style="--duration:1.5s;">
+              🎉
+            </span>
+
+            <span style="--duration:1.9s;">
+              ✨
+            </span>
+
+            <span style="--duration:1.3s;">
+              💖
+            </span>
+
+            <span style="--duration:1.7s;">
+              ⭐
+            </span>
+
+            <span style="--duration:1.4s;">
+              🎁
+            </span>
+
+            <span style="--duration:2s;">
+              🥳
+            </span>
+
+            <span style="--duration:1.6s;">
+              💫
+            </span>
+
+          </div>
+
+          <div class="final-message">
+            A very special surprise for
+            <strong>Raghav Rastogi</strong> —
+            because he's the best son in the world. ❤️
+          </div>
+
+          <div class="result-actions">
+
+            <button
+              id="replayBtn"
+              class="action-button primary"
+              type="button"
+            >
+              🔄 PLAY AGAIN
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =======================================================
+       DISCLOSURE
+  ======================================================== -->
+
+  <footer class="footer-note">
+    Demo experience — no real prize or transaction is provided.
+  </footer>
+
+
+  <script>
+    /* =========================================================
+       YOU HAVE A SPECIAL GIFT
+       Vanilla JavaScript Controller
+    ========================================================== */
+
+    (() => {
+
+      "use strict";
+
+
+      /* =======================================================
+         DOM
+      ======================================================== */
+
+      const screens = {
+        screen1:
+          document.getElementById("screen1"),
+
+        screen2:
+          document.getElementById("screen2"),
+
+        screen3:
+          document.getElementById("screen3"),
+
+        screen4:
+          document.getElementById("screen4"),
+
+        screen5:
+          document.getElementById("screen5")
+      };
+
+
+      const wantGiftBtn =
+        document.getElementById(
+          "wantGiftBtn"
+        );
+
+      const noGiftBtn =
+        document.getElementById(
+          "noGiftBtn"
+        );
+
+      const spinBtn =
+        document.getElementById(
+          "spinBtn"
+        );
+
+      const replayBtn =
+        document.getElementById(
+          "replayBtn"
+        );
+
+
+      const loadingText =
+        document.getElementById(
+          "loadingText"
+        );
+
+      const countdown =
+        document.getElementById(
+          "countdown"
+        );
+
+      const wheel =
+        document.getElementById(
+          "wheel"
+        );
+
+      const rapidPrize =
+        document.getElementById(
+          "rapidPrize"
+        );
+
+      const confetti =
+        document.getElementById(
+          "confetti"
+        );
+
+
+      const prizeCards =
+        Array.from(
+          document.querySelectorAll(
+            ".prize-card"
+          )
+        );
+
+
+      /* =======================================================
+         STATE
+      ======================================================== */
+
+      let currentScreen = "screen1";
+
+      let selectedPrize = null;
+
+      let isSpinning = false;
+
+      let noButtonMoves = 0;
+
+      let noButtonLocked = false;
+
+
+      /* =======================================================
+         SCREEN TRANSITION
+      ======================================================== */
+
+      function showScreen(
+        nextScreen,
+        callback
+      ) {
+
+        const next =
+          screens[nextScreen];
+
+        if (!next) {
+          return;
+        }
+
+
+        if (
+          nextScreen ===
+          currentScreen
+        ) {
+
+          if (
+            typeof callback ===
+            "function"
+          ) {
+            callback();
+          }
+
+          return;
+        }
+
+
+        const previous =
+          screens[currentScreen];
+
+
+        if (previous) {
+
+          previous.classList.remove(
+            "active"
+          );
+
+          previous.classList.add(
+            "leaving"
+          );
+
+
+          setTimeout(() => {
+
+            previous.classList.remove(
+              "leaving"
+            );
+
+          }, 600);
+
+        }
+
+
+        next.classList.add(
+          "active"
+        );
+
+
+        currentScreen =
+          nextScreen;
+
+
+        setTimeout(() => {
+
+          if (
+            typeof callback ===
+            "function"
+          ) {
+            callback();
+          }
+
+        }, 60);
+
+      }
+
+
+      /* =======================================================
+         PARTICLES
+      ======================================================== */
+
+      function createParticles(
+        containerId,
+        amount
+      ) {
+
+        const container =
+          document.getElementById(
+            containerId
+          );
+
+
+        if (!container) {
+          return;
+        }
+
+
+        container.innerHTML = "";
+
+
+        for (
+          let i = 0;
+          i < amount;
+          i++
+        ) {
+
+          const particle =
+            document.createElement(
+              "span"
+            );
+
+
+          particle.className =
+            "particle" +
+            (
+              Math.random() > .76
+                ? " red"
+                : ""
+            );
+
+
+          particle.style.setProperty(
+            "--size",
+            `${Math.round(
+              Math.random() * 5 + 2
+            )}px`
+          );
+
+
+          particle.style.setProperty(
+            "--x",
+            `${Math.random() * 100}%`
+          );
+
+
+          particle.style.setProperty(
+            "--y",
+            `${Math.random() * 100}%`
+          );
+
+
+          particle.style.setProperty(
+            "--opacity",
+            `${(
+              Math.random() * .65 +
+              .2
+            ).toFixed(2)}`
+          );
+
+
+          particle.style.setProperty(
+            "--duration",
+            `${(
+              Math.random() * 5 +
+              3
+            ).toFixed(2)}s`
+          );
+
+
+          particle.style.setProperty(
+            "--delay",
+            `${(
+              -Math.random() * 5
+            ).toFixed(2)}s`
+          );
+
+
+          container.appendChild(
+            particle
+          );
+
+        }
+
+      }
+
+
+      function refreshParticles() {
+
+        createParticles(
+          "particles1",
+          34
+        );
+
+        createParticles(
+          "particles2",
+          32
+        );
+
+        createParticles(
+          "particles3",
+          35
+        );
+
+        createParticles(
+          "particles4",
+          44
+        );
+
+      }
+
+
+      refreshParticles();
+
+
+      /* =======================================================
+         ESCAPING BUTTON
+      ======================================================== */
+
+      function moveNoButton() {
+
+        if (noButtonLocked) {
+          return;
+        }
+
+
+        noButtonMoves++;
+
+
+        const parent =
+          noGiftBtn.parentElement;
+
+
+        if (!parent) {
+          return;
+        }
+
+
+        const parentRect =
+          parent.getBoundingClientRect();
+
+
+        const buttonRect =
+          noGiftBtn.getBoundingClientRect();
+
+
+        /*
+          Keep the escaping button
+          inside the action area.
+        */
+
+        const horizontalLimit =
+          Math.max(
+            10,
+            parentRect.width -
+            buttonRect.width -
+            15
+          );
+
+
+        const randomX =
+          Math.random() *
+          horizontalLimit -
+          (
+            parent.clientWidth / 2 -
+            buttonRect.width / 2
+          );
+
+
+        /*
+          Keep vertical movement
+          restrained on phones so
+          the page never becomes
+          awkward or horizontally
+          scrollable.
+        */
+
+        const randomY =
+          Math.random() * 50 -
+          25;
+
+
+        const rotation =
+          Math.random() * 10 - 5;
+
+
+        const scale =
+          0.96 +
+          Math.random() * 0.06;
+
+
+        noGiftBtn.style.position =
+          "relative";
+
+
+        noGiftBtn.style.zIndex =
+          "20";
+
+
+        noGiftBtn.style.transform =
+          `
+            translate(
+              ${randomX}px,
+              ${randomY}px
+            )
+            rotate(
+              ${rotation.toFixed(1)}deg
+            )
+            scale(
+              ${scale.toFixed(2)}
+            )
+          `;
+
+
+        const playfulMessages = [
+          "😅 TRY THE GIFT!",
+          "😂 NOT THIS ONE!",
+          "🎁 CHOOSE THE GIFT!",
+          "NOPE! 😜",
+          "✨ ALMOST!",
+          "🤣 TOO SLOW!"
+        ];
+
+
+        if (
+          noButtonMoves % 2 === 0
+        ) {
+
+          noGiftBtn.textContent =
+            playfulMessages[
+              Math.floor(
+                Math.random() *
+                playfulMessages.length
+              )
+            ];
+
+        } else {
+
+          noGiftBtn.innerHTML =
+            `
+              <span class="button-text">
+                <span class="action-icon">
+                  ❌
+                </span>
+                I DON'T WANT THE GIFT
+              </span>
+            `;
+
+        }
+
+      }
+
+
+      /* Desktop */
+      noGiftBtn.addEventListener(
+        "mouseenter",
+        moveNoButton
+      );
+
+
+      /* Mobile */
+      noGiftBtn.addEventListener(
+        "pointerdown",
+        event => {
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          moveNoButton();
+
+        }
+      );
+
+
+      noGiftBtn.addEventListener(
+        "click",
+        event => {
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          moveNoButton();
+
+        }
+      );
+
+
+      noGiftBtn.addEventListener(
+        "focus",
+        () => {
+
+          moveNoButton();
+
+          noGiftBtn.blur();
+
+        }
+      );
+
+
+      /* =======================================================
+         BUTTON 1
+      ======================================================== */
+
+      wantGiftBtn.addEventListener(
+        "click",
+        () => {
+
+          if (
+            wantGiftBtn.disabled
+          ) {
+            return;
+          }
+
+
+          wantGiftBtn.disabled =
+            true;
+
+
+          noButtonLocked =
+            true;
+
+
+          /*
+            Small brightness flash
+            for a cinematic transition.
+          */
+
+          document.body.animate(
+            [
+              {
+                filter:
+                  "brightness(1)"
+              },
+
+              {
+                filter:
+                  "brightness(1.18)"
+              },
+
+              {
+                filter:
+                  "brightness(1)"
+              }
+            ],
+            {
+              duration: 550,
+              easing: "ease-out"
+            }
+          );
+
+
+          showScreen(
+            "screen2",
+            startGiftLoading
+          );
+
+        }
+      );
+
+
+      /* =======================================================
+         GIFT LOADING
+      ======================================================== */
+
+      function startGiftLoading() {
+
+        loadingText.textContent =
+          "Your gift is almost ready!";
+
+
+        setTimeout(() => {
+
+          loadingText.textContent =
+            "Opening your lucky surprise...";
+
+        }, 950);
+
+
+        setTimeout(() => {
+
+          loadingText.textContent =
+            "Almost there... ✨";
+
+        }, 1750);
+
+
+        setTimeout(() => {
+
+          showScreen(
+            "screen3"
+          );
+
+        }, 2900);
+
+      }
+
+
+      /* =======================================================
+         PRIZE SELECTION
+      ======================================================== */
+
+      prizeCards.forEach(card => {
+
+        card.addEventListener(
+          "click",
+          () => {
+
+            prizeCards.forEach(
+              other => {
+
+                other.classList.remove(
+                  "selected"
+                );
+
+                other.setAttribute(
+                  "aria-pressed",
+                  "false"
+                );
+
+              }
+            );
+
+
+            card.classList.add(
+              "selected"
+            );
+
+
+            card.setAttribute(
+              "aria-pressed",
+              "true"
+            );
+
+
+            selectedPrize =
+              card.dataset.prize ||
+              null;
+
+
+            spinBtn.disabled =
+              !selectedPrize;
+
+
+            spinBtn.animate(
+              [
+                {
+                  transform:
+                    "scale(.96)"
+                },
+
+                {
+                  transform:
+                    "scale(1.025)"
+                },
+
+                {
+                  transform:
+                    "scale(1)"
+                }
+              ],
+              {
+                duration: 350,
+                easing: "ease-out"
+              }
+            );
+
+          }
+        );
+
+      });
+
+
+      /* =======================================================
+         SPIN BUTTON
+      ======================================================== */
+
+      spinBtn.addEventListener(
+        "click",
+        () => {
+
+          if (
+            !selectedPrize ||
+            isSpinning
+          ) {
+            return;
+          }
+
+
+          isSpinning =
+            true;
+
+
+          spinBtn.disabled =
+            true;
+
+
+          showScreen(
+            "screen4",
+            startCountdown
+          );
+
+        }
+      );
+
+
+      /* =======================================================
+         COUNTDOWN
+      ======================================================== */
+
+      function animateCountdown(
+        value
+      ) {
+
+        countdown.textContent =
+          value;
+
+
+        countdown.classList.remove(
+          "pop"
+        );
+
+
+        void countdown.offsetWidth;
+
+
+        countdown.classList.add(
+          "pop"
+        );
+
+      }
+
+
+      function startCountdown() {
+
+        let number = 3;
+
+
+        animateCountdown(
+          number
+        );
+
+
+        const timer =
+          setInterval(
+            () => {
+
+              number--;
+
+
+              if (number > 0) {
+
+                animateCountdown(
+                  number
+                );
+
+              } else {
+
+                clearInterval(
+                  timer
+                );
+
+
+                animateCountdown(
+                  "GO!"
+                );
+
+
+                setTimeout(
+                  startWheelSpin,
+                  450
+                );
+
+              }
+
+            },
+            800
+          );
+
+      }
+
+
+      /* =======================================================
+         SPIN
+      ======================================================== */
+
+      const rapidPrizeLabels = [
+        "💰 ₹5,00,000 CASH",
+        "📱 1 iPHONE",
+        "🍫 1 CHOCOLATE",
+        "🎁 SURPRISE GIFT",
+        "💎 BONUS PRIZE",
+        "✨ GOLDEN REWARD"
+      ];
+
+
+      function startWheelSpin() {
+
+        const screen =
+          screens.screen4;
+
+
+        screen.classList.add(
+          "screen-shake"
+        );
+
+
+        /*
+          Multiple rotations make
+          the wheel feel dramatic.
+
+          The result is NOT determined
+          from the selected card.
+        */
+
+        const finalRotation =
+          360 * 9 +
+          238;
+
+
+        wheel.style.transform =
+          `
+            rotate(
+              ${finalRotation}deg
+            )
+          `;
+
+
+        let labelIndex = 0;
+
+
+        const rapidTimer =
+          setInterval(
+            () => {
+
+              rapidPrize.textContent =
+                rapidPrizeLabels[
+                  labelIndex %
+                  rapidPrizeLabels.length
+                ];
+
+
+              rapidPrize.classList.remove(
+                "rapid-prize"
+              );
+
+
+              void rapidPrize.offsetWidth;
+
+
+              rapidPrize.classList.add(
+                "rapid-prize"
+              );
+
+
+              labelIndex++;
+
+            },
+            135
+          );
+
+
+        setTimeout(
+          () => {
+
+            clearInterval(
+              rapidTimer
+            );
+
+
+            screen.classList.remove(
+              "screen-shake"
+            );
+
+
+            rapidPrize.textContent =
+              "🎁 The result is being revealed...";
+
+
+            setTimeout(
+              revealFinalResult,
+              900
+            );
+
+          },
+          5450
+        );
+
+      }
+
+
+      /* =======================================================
+         FINAL RESULT
+         
+         FIXED RESULT:
+         
+         RAGHAV RASTOGI
+         THE BEST SON IN THE WORLD!
+      ======================================================== */
+
+      function revealFinalResult() {
+
+        isSpinning =
+          false;
+
+
+        /*
+          Reset the wheel before
+          future replay.
+        */
+
+        wheel.style.transition =
+          "none";
+
+
+        wheel.style.transform =
+          "rotate(0deg)";
+
+
+        setTimeout(() => {
+
+          wheel.style.transition =
+            `
+              transform
+              5.4s
+              cubic-bezier(.1,.73,.08,1)
+            `;
+
+        }, 100);
+
+
+        showScreen(
+          "screen5",
+          () => {
+
+            createParticles(
+              "particles4",
+              55
+            );
+
+
+            launchConfetti();
+
+          }
+        );
+
+      }
+
+
+      /* =======================================================
+         CONFETTI
+      ======================================================== */
+
+      function randomItem(
+        array
+      ) {
+
+        return array[
+          Math.floor(
+            Math.random() *
+            array.length
+          )
+        ];
+
+      }
+
+
+      function launchConfetti() {
+
+        confetti.innerHTML =
+          "";
+
+
+        const colors = [
+          "#ffd75f",
+          "#ff3a61",
+          "#fff0ae",
+          "#f7b83c",
+          "#ffffff",
+          "#d92546"
+        ];
+
+
+        /*
+          Slightly lower quantity
+          on smaller devices.
+        */
+
+        const amount =
+          window.innerWidth < 600
+            ? 105
+            : 175;
+
+
+        for (
+          let i = 0;
+          i < amount;
+          i++
+        ) {
+
+          const piece =
+            document.createElement(
+              "span"
+            );
+
+
+          piece.className =
+            "confetti-piece";
+
+
+          piece.style.setProperty(
+            "--left",
+            `${Math.random() * 100}%`
+          );
+
+
+          piece.style.setProperty(
+            "--width",
+            `${Math.round(
+              Math.random() * 8 + 4
+            )}px`
+          );
+
+
+          piece.style.setProperty(
+            "--height",
+            `${Math.round(
+              Math.random() * 13 + 6
+            )}px`
+          );
+
+
+          piece.style.setProperty(
+            "--color",
+            randomItem(colors)
+          );
+
+
+          piece.style.setProperty(
+            "--duration",
+            `${(
+              Math.random() * 2.5 +
+              2.5
+            ).toFixed(2)}s`
+          );
+
+
+          piece.style.setProperty(
+            "--delay",
+            `${(
+              Math.random() * .75
+            ).toFixed(2)}s`
+          );
+
+
+          piece.style.setProperty(
+            "--drift",
+            `${(
+              Math.random() * 320 -
+              160
+            ).toFixed(0)}px`
+          );
+
+
+          piece.style.setProperty(
+            "--spin",
+            `${(
+              Math.random() * 1800 -
+              900
+            ).toFixed(0)}deg`
+          );
+
+
+          confetti.appendChild(
+            piece
+          );
+
+        }
+
+
+        setTimeout(() => {
+
+          confetti.innerHTML =
+            "";
+
+        }, 6500);
+
+      }
+
+
+      /* =======================================================
+         REPLAY
+      ======================================================== */
+
+      replayBtn.addEventListener(
+        "click",
+        resetExperience
+      );
+
+
+      function resetExperience() {
+
+        selectedPrize =
+          null;
+
+
+        isSpinning =
+          false;
+
+
+        noButtonMoves =
+          0;
+
+
+        noButtonLocked =
+          false;
+
+
+        /* Reset cards */
+
+        prizeCards.forEach(
+          card => {
+
+            card.classList.remove(
+              "selected"
+            );
+
+            card.setAttribute(
+              "aria-pressed",
+              "false"
+            );
+
+          }
+        );
+
+
+        /* Reset buttons */
+
+        spinBtn.disabled =
+          true;
+
+
+        wantGiftBtn.disabled =
+          false;
+
+
+        /* Reset escaping button */
+
+        noGiftBtn.style.position =
+          "";
+
+
+        noGiftBtn.style.zIndex =
+          "";
+
+
+        noGiftBtn.style.transform =
+          "";
+
+
+        noGiftBtn.innerHTML =
+          `
+            <span class="button-text">
+              <span class="action-icon">
+                ❌
+              </span>
+              I DON'T WANT THE GIFT
+            </span>
+          `;
+
+
+        /* Reset loading */
+
+        loadingText.textContent =
+          "Your gift is almost ready!";
+
+
+        /* Reset wheel */
+
+        wheel.style.transition =
+          "none";
+
+
+        wheel.style.transform =
+          "rotate(0deg)";
+
+
+        setTimeout(() => {
+
+          wheel.style.transition =
+            `
+              transform
+              5.4s
+              cubic-bezier(.1,.73,.08,1)
+            `;
+
+        }, 100);
+
+
+        /* Reset countdown */
+
+        countdown.textContent =
+          "3";
+
+
+        countdown.classList.remove(
+          "pop"
+        );
+
+
+        /* Reset rapid label */
+
+        rapidPrize.textContent =
+          "🔥 GET READY!";
+
+
+        /* Clear confetti */
+
+        confetti.innerHTML =
+          "";
+
+
+        /* Rebuild particles */
+
+        refreshParticles();
+
+
+        /* Back to start */
+
+        showScreen(
+          "screen1"
+        );
+
+      }
+
+
+    })();
+  </script>
+
+</body>
+</html>
